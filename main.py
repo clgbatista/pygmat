@@ -1,52 +1,74 @@
 
 import pandas as pd
-import lib.pygmat as gmat
+from  api.pygmat import SPACECRAFT, GROUND_STATION, FORCE_MODEL, PROPAGATOR, ECLIPSE_LOCATOR, CONTACT_LOCATOR
+import api.pygmat as gmat
+import os
 
-data = pd.read_csv('input/spire/satellite_coes_Spire.csv')
+output_path = './output/golds/'
+try:
+    os.path.isdir(output_path)
+except:
+    os.mkdir(output_path)
 
-print(data)
+spc_list = pd.read_csv('input/golds/spacecraft_golds.csv')
 
-for i in range(len(data)):
-    spacecraft = gmat.SPACECRAFT()
-    spacecraft.SMA = data["Semi-major axis (m)"][i]/1000
-    spacecraft.ECC = data[" Eccentricity"][i]
-    spacecraft.INC = data[" Inclination (rads)"][i]*360/2/3.14
-    spacecraft.RAAN = data[" RAAN (rads)"][i]*360/2/3.14
-    spacecraft.AOP = data[" Argument of Perigee (rads)"][i]*360/2/3.14
-    spacecraft.TA = data[" Mean anomaly (rads)"][i]*360/2/3.14
-    spacecraft.write_script(f'./00_sat_{i}_example.txt',name=f'sat{i}')
+for i in range(len(spc_list)):
+    spacecraft = SPACECRAFT()
+    name = spc_list.satellite[i]
+    spacecraft.SMA = spc_list.sma[i]
+    spacecraft.ECC = spc_list.ecc[i]
+    spacecraft.INC = spc_list.inc[i]
+    spacecraft.RAAN = spc_list.raan[i]
+    spacecraft.AOP = spc_list.aop[i]
+    spacecraft.TA = spc_list.ta[i]
+    spacecraft.DryMass = spc_list.dryMass[i]
+    spacecraft.write_script(f'{output_path}0_spc_{name}.txt',name=f'{name}')
 
 
-data = pd.read_csv('input/spire/groundstation_locations_Spire.csv')
-for i in range(len(data)):
-    groundStation = gmat.GROUND_STATION()
-    groundStation.Location1 = data['Latitude (degs)'][i]
-    groundStation.Location2 = data[' Longitude (degs)'][i]
-    groundStation.write_script(f'./z40_gs_{i}_example.txt',name=f'gs{i}')
+gst_list = pd.read_csv('input/golds/groundstation_golds.csv')
 
-forceModel = gmat.FORCE_MODEL()
-forceModel.write_script('./z50_fm_example.txt')
+for i in range(len(gst_list)):
+    groundStation = GROUND_STATION()
+    name = gst_list.groundStation[i]
+    groundStation.Location1 = gst_list.latitude[i]
+    groundStation.Location2 = gst_list.longitude[i]
+    groundStation.Location3 = gst_list.height[i]
+    groundStation.write_script(f'{output_path}1_gst_{name}.txt',name=f'{name}')
 
-propagator = gmat.PROPAGATOR()
-propagator.write_script('./z60_pr_example.txt')
+forceModel = FORCE_MODEL()
+forceModel.write_script(f'{output_path}200_fm_example.txt')
 
-eclipse = gmat.ECLIPSE_LOCATOR()
-eclipse.Spacecraft = 'sat1'
-eclipse.write_script('./z70_eclipse_example.txt',target_sat="sat1")
+propagator = PROPAGATOR()
+propagator.write_script(f'{output_path}300_pr_example.txt')
 
-contact = gmat.CONTACT_LOCATOR()
-contact.Observers = "{gs1, gs2}"
-contact.Target = "sat1"
-contact.Filename = "'sat1contact.txt'"
-contact.write_script('./z80_contact_example.txt',target_sat="sat1")
+eclipse = ECLIPSE_LOCATOR()
+for i in range(len(spc_list)):
+    eclipse.Spacecraft = spc_list.satellite[i]
+    eclipse.Filename = f"\'{eclipse.Spacecraft}_ecl.txt\'"
+    eclipse.write_script(f'{output_path}4_ecl_{eclipse.Spacecraft}.txt')
+
+all_gst = gst_list.groundStation.tolist()
+all_gst = ','.join(all_gst)
+
+contact = CONTACT_LOCATOR()
+for i in range(len(spc_list)):
+    contact.Observers = "{"+all_gst+"}"
+    contact.Target = spc_list.satellite[i]
+    contact.Filename = f"\'{contact.Target}_contact.txt\'"
+    contact.write_script(f'{output_path}5_cnt_{contact.Target}.txt')
+    
+all_spc = spc_list.satellite.tolist()
+all_spc = ','.join(all_spc)
 
 gmat.mission_sequence(
-    path_to_file="./z99_mission_sequence.txt",
-    spacecrafts="sat0,sat1,sat2,sat3",
-    ref_sat="sat0",
-    time=10
+    path_to_file=f"{output_path}999_mission_sequence.txt",
+    spacecrafts=all_spc,
+    ref_sat="CBERS4A",
+    time=1
 )
 
-gmat.write_script()
+gmat.write_script(
+    includes=output_path
+)
 
 print(f'SUCCESS')

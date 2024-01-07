@@ -140,10 +140,10 @@ class ECLIPSE_LOCATOR():
         self.UseEntireInterval = 'true'
         self.EclipseTypes = "{'Umbra', 'Penumbra', 'Antumbra'}"
 
-    def write_script(self,path_to_file,target_sat='SCD1'):
+    def write_script(self,path_to_file):
         f = open(path_to_file,'w')
 
-        name = f'Eclipse_{target_sat}'
+        name = f'Eclipse_{self.Spacecraft}'
 
         f.write(f'Create EclipseLocator {name};\n')
 
@@ -166,10 +166,10 @@ class CONTACT_LOCATOR:
         self.Observers = '{EMMN, ETA, ETC}'
         self.LightTimeDirection = 'Transmit'
 
-    def write_script(self,path_to_file,target_sat='SCD1'):
+    def write_script(self,path_to_file):
         f = open(path_to_file,'w')
 
-        name = f'Contact{target_sat}'
+        name = f'Contact{self.Target}'
 
         f.write(f'Create ContactLocator {name};\n')
 
@@ -186,9 +186,9 @@ def mission_sequence(path_to_file,propagator='EarthPointProp',spacecrafts="SCD1,
 
     f.close()
 
-def write_script():
+def write_script(includes='./output/'):
     results = []
-    results += [each for each in os.listdir('./') if each.endswith('.txt')]
+    results += [each for each in os.listdir(includes) if each.endswith('.txt')]
 
     file = open("./template.script","w")
 
@@ -206,9 +206,8 @@ def write_script():
     file.write("%----------------------------------------\n\n")
 
     results.sort()
-    print(results)
 
     for i in results :
-        file.write("#Include ./"+i+"\n\n")
+        file.write(f"#Include {includes}"+i+"\n\n")
 
     file.close()
