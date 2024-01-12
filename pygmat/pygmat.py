@@ -186,14 +186,13 @@ def mission_sequence(path_to_file,propagator='EarthPointProp',spacecrafts="SCD1,
 
     f.close()
 
-def write_script(includes='./output/'):
+def write_script(includes='./output/',author = 'default author'):
     results = []
     results += [each for each in os.listdir(includes) if each.endswith('.txt')]
 
     file = open("./template.script","w")
 
     date_time = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    author = "@clgbatista"
     msg = "Full Script File"
 
     file.write("% General Mission Analysis Tool(GMAT) Script\n")
