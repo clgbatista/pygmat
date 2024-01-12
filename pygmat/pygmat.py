@@ -104,7 +104,7 @@ class REGION_OF_INTEREST:
         def write_script(self,path_to_file,name='ExampleROI'):
             f = open(path_to_file,'w')
 
-            f.write(f'Create GroundStation roi{name};\n')
+            f.write(f'Create GroundStation {name};\n')
 
             for attr, value in self.__dict__.items():
                 f.writelines(f'GMAT {name}.{attr} = {value};\n')
@@ -179,8 +179,8 @@ class ECLIPSE_LOCATOR():
 
 class CONTACT_LOCATOR:
     def __init__(self):
-        self.Target = 'SCD1'
-        self.Filename = "'SCD1Contact.txt'"
+        self.Target = 'ExampleSC'
+        self.Filename = "'ExampleSC_Contact.txt'"
         self.InputEpochFormat = "'TAIModJulian'"
         self.InitialEpoch = "'21545'"
         self.StepSize = 600
@@ -190,7 +190,7 @@ class CONTACT_LOCATOR:
         self.WriteReport = 'true'
         self.RunMode = 'Automatic'
         self.UseEntireInterval = 'true'
-        self.Observers = '{EMMN, ETA, ETC}'
+        self.Observers = '{ExampleGS}'
         self.LightTimeDirection = 'Transmit'
 
     def write_script(self,path_to_file):
@@ -208,7 +208,7 @@ class CONTACT_LOCATOR:
 class ROI_LOCATOR:
     def __init__(self):
         self.Target = 'ExampleSC'
-        self.Filename = "'Contact.txt'"
+        self.Filename = "'ROI_Contact.txt'"
         self.InputEpochFormat = "'TAIModJulian'"
         self.InitialEpoch = "'21545'"
         self.StepSize = 600
@@ -218,7 +218,7 @@ class ROI_LOCATOR:
         self.WriteReport = 'true'
         self.RunMode = 'Automatic'
         self.UseEntireInterval = 'true'
-        self.Observers = '{roiExampleROI}'
+        self.Observers = '{ExampleROI}'
         self.LightTimeDirection = 'Transmit'
 
     def write_script(self,path_to_file):
