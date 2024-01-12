@@ -1,10 +1,10 @@
 
 import pandas as pd
-from  api.pygmat import SPACECRAFT, GROUND_STATION, FORCE_MODEL, PROPAGATOR, ECLIPSE_LOCATOR, CONTACT_LOCATOR
-import api.pygmat as gmat
+from  pygmat.pygmat import SPACECRAFT, GROUND_STATION, FORCE_MODEL, PROPAGATOR, ECLIPSE_LOCATOR, CONTACT_LOCATOR
+import pygmat.pygmat as gmat
 import os
 
-output_path = './output/golds/'
+output_path = 'output/golds/'
 try:
     os.path.isdir(output_path)
 except:
@@ -36,10 +36,10 @@ for i in range(len(gst_list)):
     groundStation.write_script(f'{output_path}1_gst_{name}.txt',name=f'{name}')
 
 forceModel = FORCE_MODEL()
-forceModel.write_script(f'{output_path}200_fm_example.txt')
+forceModel.write_script(f'{output_path}2_fm_example.txt')
 
 propagator = PROPAGATOR()
-propagator.write_script(f'{output_path}300_pr_example.txt')
+propagator.write_script(f'{output_path}3_pr_example.txt')
 
 eclipse = ECLIPSE_LOCATOR()
 for i in range(len(spc_list)):
