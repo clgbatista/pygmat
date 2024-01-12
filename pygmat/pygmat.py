@@ -72,9 +72,36 @@ class GROUND_STATION:
             self.Temperature = 295.1
             self.Pressure = 1013.5
             self.Humidity = 55
-            self.MinimumElevationAngle = 7
+            self.MinimumElevationAngle = 5
 
         def write_script(self,path_to_file,name='ExampleGS'):
+            f = open(path_to_file,'w')
+
+            f.write(f'Create GroundStation {name};\n')
+
+            for attr, value in self.__dict__.items():
+                f.writelines(f'GMAT {name}.{attr} = {value};\n')
+
+            f.close()
+
+class REGION_OF_INTEREST:
+        def __init__(self):
+            self.CentralBody = 'Earth'
+            self.StateType = 'Spherical'
+            self.HorizonReference = 'Sphere'
+            self.Location1 = -5.78
+            self.Location2 = -35.24
+            self.Location3 = 0
+            self.Id = "'StationId'"
+            self.IonosphereModel = "'None'"
+            self.TroposphereModel = "'None'"
+            self.DataSource = "'Constant'"
+            self.Temperature = 295.1
+            self.Pressure = 1013.5
+            self.Humidity = 55
+            self.MinimumElevationAngle = 30
+
+        def write_script(self,path_to_file,name='ExampleROI'):
             f = open(path_to_file,'w')
 
             f.write(f'Create GroundStation {name};\n')
