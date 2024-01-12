@@ -104,7 +104,7 @@ class REGION_OF_INTEREST:
         def write_script(self,path_to_file,name='ExampleROI'):
             f = open(path_to_file,'w')
 
-            f.write(f'Create GroundStation {name};\n')
+            f.write(f'Create GroundStation roi{name};\n')
 
             for attr, value in self.__dict__.items():
                 f.writelines(f'GMAT {name}.{attr} = {value};\n')
@@ -197,6 +197,34 @@ class CONTACT_LOCATOR:
         f = open(path_to_file,'w')
 
         name = f'Contact{self.Target}'
+
+        f.write(f'Create ContactLocator {name};\n')
+
+        for attr, value in self.__dict__.items():
+            f.writelines(f'GMAT {name}.{attr} = {value};\n')
+
+        f.close()
+
+class ROI_LOCATOR:
+    def __init__(self):
+        self.Target = 'ExampleSC'
+        self.Filename = "'Contact.txt'"
+        self.InputEpochFormat = "'TAIModJulian'"
+        self.InitialEpoch = "'21545'"
+        self.StepSize = 600
+        self.FinalEpoch = "'21545.138'"
+        self.UseLightTimeDelay = 'true'
+        self.UseStellarAberration = 'true'
+        self.WriteReport = 'true'
+        self.RunMode = 'Automatic'
+        self.UseEntireInterval = 'true'
+        self.Observers = '{roiExampleROI}'
+        self.LightTimeDirection = 'Transmit'
+
+    def write_script(self,path_to_file):
+        f = open(path_to_file,'w')
+
+        name = f'ROIContact{self.Target}'
 
         f.write(f'Create ContactLocator {name};\n')
 
